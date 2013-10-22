@@ -6,6 +6,16 @@
 
 package ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
 /**
  *
  * @author Miro
@@ -15,8 +25,32 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * Creates new form MainWindow
      */
-    public MainWindow() {
+    public MainWindow() throws Exception {
         initComponents();
+        
+        //D:\Work\PromotionChecker\listy wyprzedażowe_V3.xls
+        FileInputStream file = new FileInputStream(new File("D:\\Work\\PromotionChecker\\listy wyprzedażowe_V3.xls"));
+
+        //Get the workbook instance for XLS file
+        HSSFWorkbook workbook = new HSSFWorkbook(file);
+
+        //Get first sheet from the workbook
+        HSSFSheet sheet = workbook.getSheetAt(0);
+
+        //Get iterator to all the rows in current sheet
+        Iterator<Row> rowIterator = sheet.iterator();
+
+        //Get iterator to all cells of current row
+        Iterator<Cell> cellIterator = rowIterator.next().cellIterator();
+        while (cellIterator.hasNext()){
+            Cell cell = cellIterator.next();
+            System.out.println(cell.getStringCellValue());
+        }
+        
+//        DiscountManager dm = new DiscountManager();
+//        dm.create(new Discounts("test", 12));
+//        dm.save();
+//        
     }
 
     /**
@@ -28,13 +62,48 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        jTabbedPane4 = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
+        readWarehouse = new javax.swing.JMenuItem();
+        readDiscounts = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jMenu1.setText("File");
+        jTabbedPane1.addTab("Ceny z uwzględnieniem rabatów ", jTabbedPane2);
+        jTabbedPane1.addTab("Stan magazynu", jTabbedPane3);
+        jTabbedPane1.addTab("Rabaty", jTabbedPane4);
+
+        jMenu1.setText("Plik");
+
+        jMenu3.setText("Wczytaj");
+
+        readWarehouse.setText("Stan magazynu");
+        readWarehouse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                readWarehouseActionPerformed(evt);
+            }
+        });
+        jMenu3.add(readWarehouse);
+
+        readDiscounts.setText("Rabaty");
+        readDiscounts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                readDiscountsActionPerformed(evt);
+            }
+        });
+        jMenu3.add(readDiscounts);
+
+        jMenu1.add(jMenu3);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
@@ -46,15 +115,25 @@ public class MainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 572, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 426, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 41, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void readWarehouseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readWarehouseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_readWarehouseActionPerformed
+
+    private void readDiscountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readDiscountsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_readDiscountsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -86,7 +165,11 @@ public class MainWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainWindow().setVisible(true);
+                try {
+                    new MainWindow().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -94,6 +177,14 @@ public class MainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JTabbedPane jTabbedPane3;
+    private javax.swing.JTabbedPane jTabbedPane4;
+    private javax.swing.JMenuItem readDiscounts;
+    private javax.swing.JMenuItem readWarehouse;
     // End of variables declaration//GEN-END:variables
 }
