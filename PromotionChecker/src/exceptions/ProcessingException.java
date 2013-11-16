@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class ProcessingException extends RuntimeException {
     
-    public final int MULTI_LINE = 1;
-    public final int STRING_TYPE = 2;
+    public static final int MULTI_LINE = 1;
+    public static final int STRING_TYPE = 2;
     
     private List<String> errorList;
     private String message;
@@ -37,5 +37,10 @@ public class ProcessingException extends RuntimeException {
 
     public int getType() {
         return type;
+    }
+    
+    @Override
+    public String getMessage(){
+        return message;
     }
 }

@@ -1,6 +1,7 @@
 package readers.warehouse;
 
 import db.entities.Warehouse;
+import exceptions.ProcessingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,9 +36,14 @@ public class XmlWarehouseReader implements IWarehouseReader {
         }
         Row row = rowIterator.next();
         currentPosition++;
+        String name = null;
         try {
             Iterator<Cell> cellIterator = row.cellIterator();
-            String name = cellIterator.next().getStringCellValue();
+            Cell cell = cellIterator.next();
+            if (cell.getCellType() == Cell.CELL_TYPE_BLANK){
+                return getNext();
+            }
+            name = cell.getStringCellValue();
             int amount = (int)cellIterator.next().getNumericCellValue();
             float price = (float)cellIterator.next().getNumericCellValue();
             if (name == null || name.trim().length() == 0 || price == 0){
@@ -45,7 +51,13 @@ public class XmlWarehouseReader implements IWarehouseReader {
             }
             return new Warehouse(name, amount, price, currentPosition);
         } catch (Exception ex) {
-            throw new RuntimeException(currentPosition + "");
+            String message;
+            if (name != null){
+                message = "NAZWA PRODUKTU: " + name;
+            } else {
+                message = "LINIA: " + currentPosition;
+            }
+            throw new RuntimeException(message);
         }
     }
     
@@ -55,7 +67,7 @@ public class XmlWarehouseReader implements IWarehouseReader {
 
     private void checkSheet(Row row) {
         if (row.getLastCellNum() < 5){
-            throw new RuntimeException("Zła ilość kolumn w pliku.");
+            throw new ProcessingException("Zła ilość kolumn w pliku.");
         }
     }
 }

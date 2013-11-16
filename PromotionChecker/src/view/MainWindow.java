@@ -10,17 +10,16 @@ import calculated.Item;
 import controlers.MainWindowsControler;
 import db.entities.Discounts;
 import db.entities.Warehouse;
-import java.io.IOException;
+import exceptions.ProcessingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import readers.discount.XmlDiscountReader;
-import readers.warehouse.XmlWarehouseReader;
 
 /**
  *
@@ -28,17 +27,23 @@ import readers.warehouse.XmlWarehouseReader;
  */
 public class MainWindow extends javax.swing.JFrame {
 
-    private JFileChooser fc = new JFileChooser();
+    private JFileChooser fileChooser = new JFileChooser();
+    private JFileChooser directoryChooser;
     private MainWindowsControler controler;
     
     public MainWindow() throws Exception {
-        initComponents();
-        items = new ArrayList<Item>();
-
+        extendedInitComponents();
         controler = new MainWindowsControler(this);
         repaintItemsTable();
     }
 
+    private void extendedInitComponents(){
+        initComponents();
+        items = new ArrayList<Item>();
+        directoryChooser = new JFileChooser();
+        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -68,6 +73,11 @@ public class MainWindow extends javax.swing.JFrame {
         readWarehouse = new javax.swing.JMenuItem();
         readDiscounts = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -160,7 +170,39 @@ public class MainWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText("Pomoc");
+
+        jMenuItem3.setText("Instrukcja");
+        jMenu2.add(jMenuItem3);
+
+        jMenu4.setText("Zapisz przykładowy plik");
+
+        jMenuItem5.setText("Rabaty");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem5);
+
+        jMenuItem6.setText("Stan magazynu");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem6);
+
+        jMenu2.add(jMenu4);
+
+        jMenuItem4.setText("Informacje");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem4);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -182,20 +224,42 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void readWarehouseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readWarehouseActionPerformed
-        int returnVal = fc.showOpenDialog(this);
+        int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal != 0){
             return;
         }
-        controler.readWarehouseFromXml(fc.getSelectedFile());
+        controler.readWarehouseFromXml(fileChooser.getSelectedFile());
     }//GEN-LAST:event_readWarehouseActionPerformed
 
     private void readDiscountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readDiscountsActionPerformed
-        int returnVal = fc.showOpenDialog(this);
+        int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal != 0){
             return;
         }
-        controler.readDiscountsFromXml(fc.getSelectedFile());
+        controler.readDiscountsFromXml(fileChooser.getSelectedFile());
     }//GEN-LAST:event_readDiscountsActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        JFrame infoView = new InfoWindow();
+        infoView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        infoView.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        int returnVal = directoryChooser.showOpenDialog(this);
+        if (returnVal != 0){
+            return;
+        }
+        controler.saveDiscountFileExample(directoryChooser.getSelectedFile());
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        int returnVal = directoryChooser.showOpenDialog(this);
+        if (returnVal != 0){
+            return;
+        }
+        controler.saveWarehouseFileExample(directoryChooser.getSelectedFile());
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -245,8 +309,13 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JTabbedPane mainTable;
     private javax.swing.JMenuItem readDiscounts;
     private javax.swing.JMenuItem readWarehouse;
@@ -294,19 +363,33 @@ public class MainWindow extends javax.swing.JFrame {
         return items;
     }
     
-    public void showCriticalError(){
-        JOptionPane.showMessageDialog(this, "Nieznany błąd", "Błąd", JOptionPane.ERROR_MESSAGE);
+    public void showCriticalError(String message){
+        JOptionPane.showMessageDialog(this, "Nieznany błąd. \n" + message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
     
-    public void showError(List<String> list){
+    public void showError(ProcessingException exception){
+        switch(exception.getType()){
+            case ProcessingException.MULTI_LINE :
+                showError(exception.getErrorList());
+                return;
+            case ProcessingException.STRING_TYPE :
+                showError(exception.getMessage());
+        }
+    }
+    
+    private void showError(List<String> list){
         String message = Arrays.toString(list.subList(0, list.size() > 10 ? 10 : list.size()).toArray());
+        message = message.substring(1, message.length() - 1);
         if (list.size() > 10) {
             message += ", ...";
+        }
+        if (message.length() > 150){
+            message = message.replaceAll(",", ", \n");
         }
         JOptionPane.showMessageDialog(this, "Błąd podczas wczytywania lini:\n" + message, "Wczytywanie nie powiodło się", JOptionPane.ERROR_MESSAGE);
     }
     
-    public void showError(String message){
+    private void showError(String message){
         JOptionPane.showMessageDialog(this, message, "Błąd podczas wczytywania pliku", JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -7,6 +7,7 @@
 package readers.discount;
 
 import db.entities.Discounts;
+import exceptions.ProcessingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,14 +40,24 @@ public class XmlDiscountReader implements IDiscountReader {
         }
         Row row = rowIterator.next();
         currentRow++;
+        String name = null;
         try {
             Iterator<Cell> cellIterator = row.cellIterator();
-            String name = cellIterator.next().getStringCellValue();
-            float percentage;
-            percentage = getPercentage(cellIterator.next());
+            Cell cell = cellIterator.next();
+            if (cell.getCellType() == Cell.CELL_TYPE_BLANK){
+                return getNext();
+            }
+            name = cell.getStringCellValue();
+            float percentage = getPercentage(cellIterator.next());
             return new Discounts(name, percentage);
         } catch (Exception ex){
-            throw new RuntimeException(currentSheet + "");
+            String message = "SKOROSZYT: " + (currentSheet + 1);
+            if (name != null){
+                message += " NAZWA PRODUKTU: " + name;
+            } else {
+                message += " LINIA: " + currentRow;
+            }
+            throw new RuntimeException(message);
         }
     }
     
@@ -97,7 +108,7 @@ public class XmlDiscountReader implements IDiscountReader {
     
     private void checkSheet(Row row) {
         if (row.getLastCellNum() > 4){
-            throw new RuntimeException("Zła ilość kolumn w pliku.");
+            throw new ProcessingException("Zła ilość kolumn w pliku.");
         }
     }
 }

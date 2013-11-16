@@ -5,14 +5,18 @@ import db.DiscountManager;
 import db.WarehouseManager;
 import db.entities.Discounts;
 import db.entities.Warehouse;
+import exceptions.ProcessingException;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import readers.discount.IDiscountReader;
 import readers.discount.XmlDiscountReader;
 import readers.warehouse.IWarehouseReader;
 import readers.warehouse.XmlWarehouseReader;
@@ -34,44 +38,31 @@ public class MainWindowsControler {
     public void readWarehouseFromXml(File sourceFile){
         try {
             readWarehouseActionPerformed(new XmlWarehouseReader(sourceFile));
+        } catch (ProcessingException ex){
+            view.showError(ex);
         } catch (Exception ex) {
-            view.showError(ex.getMessage());
+            view.showCriticalError(ex.getMessage());
         }
     }
     
     public void readDiscountsFromXml(File sourceFile){
         try {
             readDiscountsActionPerformed(new XmlDiscountReader(sourceFile));
+        } catch (ProcessingException ex){
+            view.showError(ex);
         } catch (Exception ex) {
-            view.showError(ex.getMessage());
+            view.showCriticalError(ex.getMessage());
         }
     }
     
     public void readWarehouseActionPerformed(IWarehouseReader warehouseReader){
-        HashMap<String, Warehouse> warehouses = readFromFile(warehouseReader);
-                
-        WarehouseManager warehouseManager = null;
-        boolean criticalError = false;
-        try {
-            warehouseManager = new WarehouseManager();
-            for (Entry<String, Warehouse> warehouse : warehouses.entrySet()){
-                warehouseManager.create(warehouse.getValue());
-            }
-            warehouseManager.save();
-        } catch(Exception ex){
-            view.showCriticalError();
-            criticalError = true;
-        } finally {
-            if (warehouseManager != null){
-                warehouseManager.close();
-            }
-        }
-        displayError(errors, criticalError);
+        HashMap<String, Warehouse> warehouses = readWarehousesFromFile(warehouseReader);
+        saveWarehousesToDatabase(warehouses);
         view.repiantWarehouseTable();
         recalculateItems();
     }
     
-    private HashMap<String, Warehouse> readFromFile(IWarehouseReader warehouseReader){
+    private HashMap<String, Warehouse> readWarehousesFromFile(IWarehouseReader warehouseReader){
         HashMap<String, Warehouse> warehouses = new HashMap<String, Warehouse>();
             //TODO: check prices
         ArrayList<String> errors = new ArrayList<String>();
@@ -88,17 +79,39 @@ public class MainWindowsControler {
                 errors.add(ex.getMessage());
             }
         }
+        throwExceptionIfPresent(errors);
         return warehouses;
     }
+    
+    private void saveWarehousesToDatabase(HashMap<String, Warehouse> warehouses){
+        WarehouseManager warehouseManager = null;
+        try {
+            warehouseManager = new WarehouseManager();
+            for (Entry<String, Warehouse> warehouse : warehouses.entrySet()){
+                warehouseManager.create(warehouse.getValue());
+            }
+            warehouseManager.save();
+        } finally {
+            if (warehouseManager != null){
+                warehouseManager.close();
+            }
+        }
+    }
 
-    //TODO: refactor to interface
-    public void readDiscountsActionPerformed(XmlDiscountReader xmlDiscountReader) {
+    public void readDiscountsActionPerformed(IDiscountReader discountReader) {
+        HashMap<String, Discounts> discounts = readDiscountsFromFile(discountReader);
+        saveDiscountsToDatabase(discounts);
+        view.repaintDiscountsTable();
+        recalculateItems();
+    }
+
+    private HashMap<String, Discounts> readDiscountsFromFile(IDiscountReader discountReader){
         HashMap<String, Discounts> discounts = new HashMap<String, Discounts>();
         //TODO: check prices
         ArrayList<String> errors = new ArrayList<String>();
-        while(xmlDiscountReader.hasNext()){
+        while(discountReader.hasNext()){
             try {
-                Discounts discount = xmlDiscountReader.getNext();
+                Discounts discount = discountReader.getNext();
                 if (discounts.get(discount.getName()) == null){
                     discounts.put(discount.getName(), discount);
                 }
@@ -106,29 +119,25 @@ public class MainWindowsControler {
                 errors.add(ex.getMessage());
             }
         }
-        
+        throwExceptionIfPresent(errors);
+        return discounts;
+    }
+
+    private void saveDiscountsToDatabase(HashMap<String, Discounts> discounts) {
         DiscountManager discountManager = null;
-        boolean criticalError = false;
         try {
             discountManager = new DiscountManager();
             for (Entry<String, Discounts> discount : discounts.entrySet()){
                 discountManager.create(discount.getValue());
             }
             discountManager.save();
-        } catch(Exception ex){
-            view.showCriticalError();
-            criticalError = true;
         } finally {
             if (discountManager != null){
                 discountManager.close();
             }
         }
-        displayError(errors, criticalError);
-
-        view.repaintDiscountsTable();
-        recalculateItems();
     }
-
+    
     private void recalculateItems() {
         if (view.getDiscountsList().isEmpty() || view.getWarehouseList().isEmpty()){
             return;
@@ -146,11 +155,38 @@ public class MainWindowsControler {
         view.repaintItemsTable();
     }
     
-    private boolean displayErrorIfNeeded(List<String> list){
-        if (list.size() > 0){
-            view.showError(list);
-            return true;
+    private void throwExceptionIfPresent(List<String> list){
+        if (list != null && list.size() > 0){
+            throw new ProcessingException(list);
         }
-        return false;
+    }
+
+    public void saveExampleFile(File selectedFile, String systemFileName, String saveAs) {
+        FileOutputStream fileOutputStream = null;
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("resources/" + systemFileName);
+            fileOutputStream = new FileOutputStream(selectedFile + "/" + saveAs);
+            byte[] data = new byte[10000];
+            int amount;
+            while ((amount = inputStream.read(data)) > 0){
+                fileOutputStream.write(data, 0, amount);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileOutputStream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void saveDiscountFileExample(File selectedFile) {
+        saveExampleFile(selectedFile, "dscounts.xls", "rabaty.xls");
+    }
+
+    public void saveWarehouseFileExample(File selectedFile) {
+        saveExampleFile(selectedFile, "warehouse.xls", "stan magazynu.xls");
     }
 }
