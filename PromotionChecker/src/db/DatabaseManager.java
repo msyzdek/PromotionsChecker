@@ -14,7 +14,7 @@ import javax.persistence.Persistence;
  *
  * @author Miro
  */
-public class DatabaseManager {
+public class DatabaseManager<T> {
     
     protected EntityManagerFactory emf;
     protected EntityManager em;
@@ -25,14 +25,22 @@ public class DatabaseManager {
         em.getTransaction().begin();
     }
     
+    public void create(T entity){
+        em.persist(entity);
+    }
+    
     @Override
     protected void finalize() throws Throwable {
         super.finalize(); 
-        emf.close();
-        em.close();
+        close();
     }
     
     public void save(){
         em.getTransaction().commit();
+    }
+    
+    public void close(){
+        em.close();
+        emf.close();
     }
 }

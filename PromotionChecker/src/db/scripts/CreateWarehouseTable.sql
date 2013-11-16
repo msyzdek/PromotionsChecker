@@ -1,0 +1,9 @@
+DROP TABLE WAREHOUSE;
+
+create table warehouse (ID INT not null primary key GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), 
+        NAME VARCHAR(100),
+        AMOUNT NUMERIC,
+        PRICE REAL,
+        POSITION INT,
+        CREATEDAT DATE
+)

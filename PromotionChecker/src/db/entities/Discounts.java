@@ -6,6 +6,8 @@
 
 package db.entities;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -19,6 +21,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -35,6 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Discounts.findByAmountinpercentage", query = "SELECT d FROM Discounts d WHERE d.amountinpercentage = :amountinpercentage"),
     @NamedQuery(name = "Discounts.findByCreatedat", query = "SELECT d FROM Discounts d WHERE d.createdat = :createdat")})
 public class Discounts implements Serializable {
+    @Transient
+    private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,7 +76,9 @@ public class Discounts implements Serializable {
     }
 
     public void setId(Integer id) {
+        Integer oldId = this.id;
         this.id = id;
+        changeSupport.firePropertyChange("id", oldId, id);
     }
 
     public String getName() {
@@ -79,7 +86,9 @@ public class Discounts implements Serializable {
     }
 
     public void setName(String name) {
+        String oldName = this.name;
         this.name = name;
+        changeSupport.firePropertyChange("name", oldName, name);
     }
 
     public float getAmountinpercentage() {
@@ -87,7 +96,9 @@ public class Discounts implements Serializable {
     }
 
     public void setAmountinpercentage(float amountinpercentage) {
+        float oldAmountinpercentage = this.amountinpercentage;
         this.amountinpercentage = amountinpercentage;
+        changeSupport.firePropertyChange("amountinpercentage", oldAmountinpercentage, amountinpercentage);
     }
 
     public Date getCreatedat() {
@@ -95,7 +106,9 @@ public class Discounts implements Serializable {
     }
 
     public void setCreatedat(Date createdat) {
+        Date oldCreatedat = this.createdat;
         this.createdat = createdat;
+        changeSupport.firePropertyChange("createdat", oldCreatedat, createdat);
     }
 
     @Override
@@ -121,6 +134,14 @@ public class Discounts implements Serializable {
     @Override
     public String toString() {
         return "db.entities.Discounts[ id=" + id + " ]";
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
     }
     
 }

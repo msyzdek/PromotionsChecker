@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package db;
+package readers.discount;
 
 import db.entities.Discounts;
 
@@ -12,5 +12,8 @@ import db.entities.Discounts;
  *
  * @author Miro
  */
-public class DiscountManager extends DatabaseManager<Discounts> {
+public interface IDiscountReader {
+    Discounts getNext();
+
+    public boolean hasNext();
 }
