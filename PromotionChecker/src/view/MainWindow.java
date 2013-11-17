@@ -9,13 +9,17 @@ package view;
 import calculated.Item;
 import controlers.MainWindowsControler;
 import db.entities.Discounts;
-import db.entities.Warehouse;
+import db.entities.Products;
 import exceptions.ProcessingException;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -42,6 +46,7 @@ public class MainWindow extends javax.swing.JFrame {
         items = new ArrayList<Item>();
         directoryChooser = new JFileChooser();
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        setframeIcon();
     }
     
     /**
@@ -58,11 +63,11 @@ public class MainWindow extends javax.swing.JFrame {
         PromotionCheckerPUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("PromotionCheckerPU").createEntityManager();
         discountsQuery = java.beans.Beans.isDesignTime() ? null : PromotionCheckerPUEntityManager.createQuery("SELECT d FROM Discounts d order by d.name");
         discountsList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(discountsQuery.getResultList());
-        warehouseQuery = java.beans.Beans.isDesignTime() ? null : PromotionCheckerPUEntityManager.createQuery("SELECT w FROM Warehouse w order by w.name");
-        warehouseList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(warehouseQuery.getResultList());
+        productQuery = java.beans.Beans.isDesignTime() ? null : PromotionCheckerPUEntityManager.createQuery("SELECT w FROM Products w order by w.name");
+        productList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(productQuery.getResultList());
         mainTable = new javax.swing.JTabbedPane();
-        warehousePanel = new javax.swing.JScrollPane();
-        warehouseTable = new javax.swing.JTable();
+        productPanel = new javax.swing.JScrollPane();
+        productTable = new javax.swing.JTable();
         discountPanel = new javax.swing.JScrollPane();
         discountTable = new javax.swing.JTable();
         sumupPanel = new javax.swing.JScrollPane();
@@ -70,7 +75,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
-        readWarehouse = new javax.swing.JMenuItem();
+        readProduct = new javax.swing.JMenuItem();
         readDiscounts = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -80,14 +85,20 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuItem4 = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
+        jMenuItem1.setName("jMenuItem1"); // NOI18N
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setName("Form"); // NOI18N
 
         mainTable.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        mainTable.setName("mainTable"); // NOI18N
 
-        warehouseTable.setColumnSelectionAllowed(true);
+        productPanel.setName("productPanel"); // NOI18N
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, warehouseList, warehouseTable);
+        productTable.setColumnSelectionAllowed(true);
+        productTable.setName("productTable"); // NOI18N
+
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, productList, productTable);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
         columnBinding.setColumnName("Name");
         columnBinding.setColumnClass(String.class);
@@ -99,10 +110,14 @@ public class MainWindow extends javax.swing.JFrame {
         columnBinding.setColumnClass(Integer.class);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
-        warehousePanel.setViewportView(warehouseTable);
-        warehouseTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        productPanel.setViewportView(productTable);
+        productTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        mainTable.addTab("Stan magazynu", warehousePanel);
+        mainTable.addTab("Stan magazynu", productPanel);
+
+        discountPanel.setName("discountPanel"); // NOI18N
+
+        discountTable.setName("discountTable"); // NOI18N
 
         jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, discountsList, discountTable);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
@@ -118,6 +133,8 @@ public class MainWindow extends javax.swing.JFrame {
         discountPanel.setViewportView(discountTable);
 
         mainTable.addTab("Rabaty", discountPanel);
+
+        sumupPanel.setName("sumupPanel"); // NOI18N
 
         sumupTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -142,23 +159,30 @@ public class MainWindow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        sumupTable.setName("sumupTable"); // NOI18N
         sumupPanel.setViewportView(sumupTable);
 
         mainTable.addTab("Ceny z uwzględnieniem rabatów", sumupPanel);
 
+        jMenuBar1.setName("jMenuBar1"); // NOI18N
+
         jMenu1.setText("Plik");
+        jMenu1.setName("jMenu1"); // NOI18N
 
         jMenu3.setText("Wczytaj");
+        jMenu3.setName("jMenu3"); // NOI18N
 
-        readWarehouse.setText("Stan magazynu");
-        readWarehouse.addActionListener(new java.awt.event.ActionListener() {
+        readProduct.setText("Stan magazynu");
+        readProduct.setName("readProduct"); // NOI18N
+        readProduct.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                readWarehouseActionPerformed(evt);
+                readProductActionPerformed(evt);
             }
         });
-        jMenu3.add(readWarehouse);
+        jMenu3.add(readProduct);
 
         readDiscounts.setText("Rabaty");
+        readDiscounts.setName("readDiscounts"); // NOI18N
         readDiscounts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 readDiscountsActionPerformed(evt);
@@ -171,13 +195,17 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Pomoc");
+        jMenu2.setName("jMenu2"); // NOI18N
 
         jMenuItem3.setText("Instrukcja");
+        jMenuItem3.setName("jMenuItem3"); // NOI18N
         jMenu2.add(jMenuItem3);
 
         jMenu4.setText("Zapisz przykładowy plik");
+        jMenu4.setName("jMenu4"); // NOI18N
 
         jMenuItem5.setText("Rabaty");
+        jMenuItem5.setName("jMenuItem5"); // NOI18N
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
@@ -186,6 +214,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenu4.add(jMenuItem5);
 
         jMenuItem6.setText("Stan magazynu");
+        jMenuItem6.setName("jMenuItem6"); // NOI18N
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
@@ -196,6 +225,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenu2.add(jMenu4);
 
         jMenuItem4.setText("Informacje");
+        jMenuItem4.setName("jMenuItem4"); // NOI18N
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -223,13 +253,13 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void readWarehouseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readWarehouseActionPerformed
+    private void readProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readProductActionPerformed
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal != 0){
             return;
         }
-        controler.readWarehouseFromXml(fileChooser.getSelectedFile());
-    }//GEN-LAST:event_readWarehouseActionPerformed
+        controler.readProductFromXml(fileChooser.getSelectedFile());
+    }//GEN-LAST:event_readProductActionPerformed
 
     private void readDiscountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readDiscountsActionPerformed
         int returnVal = fileChooser.showOpenDialog(this);
@@ -258,7 +288,7 @@ public class MainWindow extends javax.swing.JFrame {
         if (returnVal != 0){
             return;
         }
-        controler.saveWarehouseFileExample(directoryChooser.getSelectedFile());
+        controler.saveProductFileExample(directoryChooser.getSelectedFile());
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     /**
@@ -292,7 +322,11 @@ public class MainWindow extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new MainWindow().setVisible(true);
+                    if (MainWindowsControler.expired()){
+                        new ExpirationWindow().setVisible(true);
+                    } else {
+                        new MainWindow().setVisible(true);
+                    }
                 } catch (Exception ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -317,14 +351,14 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JTabbedPane mainTable;
+    private javax.swing.JScrollPane productPanel;
+    private javax.swing.JTable productTable;
     private javax.swing.JMenuItem readDiscounts;
-    private javax.swing.JMenuItem readWarehouse;
+    private javax.swing.JMenuItem readProduct;
     private javax.swing.JScrollPane sumupPanel;
     private javax.swing.JTable sumupTable;
-    private java.util.List<db.entities.Warehouse> warehouseList;
-    private javax.swing.JScrollPane warehousePanel;
-    private javax.persistence.Query warehouseQuery;
-    private javax.swing.JTable warehouseTable;
+    private java.util.List<db.entities.Products> productList;
+    private javax.persistence.Query productQuery;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     private List<Item> items;
@@ -339,10 +373,10 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
     
-    public void repiantWarehouseTable(){
-        warehouseList.clear();
-        warehouseList.addAll(warehouseQuery.getResultList());
-        warehouseTable.repaint();
+    public void repiantProductTable(){
+        productList.clear();
+        productList.addAll(productQuery.getResultList());
+        productTable.repaint();
     }
     
     public void repaintDiscountsTable(){
@@ -351,8 +385,8 @@ public class MainWindow extends javax.swing.JFrame {
         discountTable.repaint();
     }
     
-    public List<Warehouse> getWarehouseList(){
-        return warehouseList;
+    public List<Products> getProductList(){
+        return productList;
     }
     
     public List<Discounts> getDiscountsList(){
@@ -362,6 +396,18 @@ public class MainWindow extends javax.swing.JFrame {
     public List<Item> getSumupList(){
         return items;
     }
+    
+    public void setframeIcon(){
+        try{
+            InputStream imgStream = this.getClass().getResourceAsStream("/resources/main_icon.png");
+            BufferedImage bi = ImageIO.read(imgStream);
+            ImageIcon myImg = new ImageIcon(bi);
+            this.setIconImage(myImg.getImage());
+        }catch(Exception e){
+            System.out.println(e);
+        }   
+    };
+
     
     public void showCriticalError(String message){
         JOptionPane.showMessageDialog(this, "Nieznany błąd. \n" + message, "Błąd", JOptionPane.ERROR_MESSAGE);

@@ -3,7 +3,7 @@
   <persistence-unit name="PromotionCheckerPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>db.entities.Discounts</class>
-    <class>db.entities.Warehouse</class>
+    <class>db.entities.Products</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/tt"/>
       <property name="javax.persistence.jdbc.password" value="root"/>

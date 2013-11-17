@@ -2,15 +2,16 @@ package controlers;
 
 import calculated.Item;
 import db.DiscountManager;
-import db.WarehouseManager;
+import db.ProductManager;
 import db.entities.Discounts;
-import db.entities.Warehouse;
+import db.entities.Products;
 import exceptions.ProcessingException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -18,8 +19,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import readers.discount.IDiscountReader;
 import readers.discount.XmlDiscountReader;
-import readers.warehouse.IWarehouseReader;
-import readers.warehouse.XmlWarehouseReader;
+import readers.product.IProductReader;
+import readers.product.XmlProductReader;
+import view.ExpirationWindow;
 import view.MainWindow;
 
 /**
@@ -35,9 +37,9 @@ public class MainWindowsControler {
         recalculateItems();
     }
 
-    public void readWarehouseFromXml(File sourceFile){
+    public void readProductFromXml(File sourceFile){
         try {
-            readWarehouseActionPerformed(new XmlWarehouseReader(sourceFile));
+            readProductActionPerformed(new XmlProductReader(sourceFile));
         } catch (ProcessingException ex){
             view.showError(ex);
         } catch (Exception ex) {
@@ -55,45 +57,45 @@ public class MainWindowsControler {
         }
     }
     
-    public void readWarehouseActionPerformed(IWarehouseReader warehouseReader){
-        HashMap<String, Warehouse> warehouses = readWarehousesFromFile(warehouseReader);
-        saveWarehousesToDatabase(warehouses);
-        view.repiantWarehouseTable();
+    public void readProductActionPerformed(IProductReader productReader){
+        HashMap<String, Products> products = readProductsFromFile(productReader);
+        saveProductsToDatabase(products);
+        view.repiantProductTable();
         recalculateItems();
     }
     
-    private HashMap<String, Warehouse> readWarehousesFromFile(IWarehouseReader warehouseReader){
-        HashMap<String, Warehouse> warehouses = new HashMap<String, Warehouse>();
+    private HashMap<String, Products> readProductsFromFile(IProductReader productReader){
+        HashMap<String, Products> products = new HashMap<String, Products>();
             //TODO: check prices
         ArrayList<String> errors = new ArrayList<String>();
-        while(warehouseReader.hasNext()){
+        while(productReader.hasNext()){
             try {
-                Warehouse warehouse = warehouseReader.getNext();
-                Warehouse fromHash = warehouses.get(warehouse.getName()); 
+                Products product = productReader.getNext();
+                Products fromHash = products.get(product.getName()); 
                 if (fromHash != null){
-                    fromHash.setAmount(fromHash.getAmount() + warehouse.getAmount());
+                    fromHash.setAmount(fromHash.getAmount() + product.getAmount());
                 } else {
-                    warehouses.put(warehouse.getName(), warehouse);
+                    products.put(product.getName(), product);
                 }
             } catch (RuntimeException ex) {
                 errors.add(ex.getMessage());
             }
         }
         throwExceptionIfPresent(errors);
-        return warehouses;
+        return products;
     }
     
-    private void saveWarehousesToDatabase(HashMap<String, Warehouse> warehouses){
-        WarehouseManager warehouseManager = null;
+    private void saveProductsToDatabase(HashMap<String, Products> products){
+        ProductManager productManager = null;
         try {
-            warehouseManager = new WarehouseManager();
-            for (Entry<String, Warehouse> warehouse : warehouses.entrySet()){
-                warehouseManager.create(warehouse.getValue());
+            productManager = new ProductManager();
+            for (Entry<String, Products> product : products.entrySet()){
+                productManager.create(product.getValue());
             }
-            warehouseManager.save();
+            productManager.save();
         } finally {
-            if (warehouseManager != null){
-                warehouseManager.close();
+            if (productManager != null){
+                productManager.close();
             }
         }
     }
@@ -139,7 +141,7 @@ public class MainWindowsControler {
     }
     
     private void recalculateItems() {
-        if (view.getDiscountsList().isEmpty() || view.getWarehouseList().isEmpty()){
+        if (view.getDiscountsList().isEmpty() || view.getProductList().isEmpty()){
             return;
         }
         
@@ -149,8 +151,8 @@ public class MainWindowsControler {
         }
         
         List<Item> items = view.getSumupList();
-        for (Warehouse warehouse : view.getWarehouseList()){
-            items.add(new Item(warehouse, discounts.get(warehouse.getName())));
+        for (Products product : view.getProductList()){
+            items.add(new Item(product, discounts.get(product.getName())));
         }
         view.repaintItemsTable();
     }
@@ -186,7 +188,12 @@ public class MainWindowsControler {
         saveExampleFile(selectedFile, "dscounts.xls", "rabaty.xls");
     }
 
-    public void saveWarehouseFileExample(File selectedFile) {
-        saveExampleFile(selectedFile, "warehouse.xls", "stan magazynu.xls");
+    public void saveProductFileExample(File selectedFile) {
+        saveExampleFile(selectedFile, "product.xls", "stan magazynu.xls");
+    }
+    
+    public static boolean expired() {
+        GregorianCalendar expirationDate = new GregorianCalendar(2014, 12, 1);
+        return expirationDate.compareTo(new GregorianCalendar()) < 0;
     }
 }

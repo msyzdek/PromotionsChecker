@@ -7,7 +7,7 @@
 package calculated;
 
 import db.entities.Discounts;
-import db.entities.Warehouse;
+import db.entities.Products;
 
 /**
  *
@@ -20,9 +20,9 @@ public class Item {
     private double discountInMoney;
     private double priceDiscountIncluded;
     
-    public Item(Warehouse warehouse, Discounts discount){
-        name = warehouse.getName();
-        originalPrice = warehouse.getPrice();
+    public Item(Products product, Discounts discount){
+        name = product.getName();
+        originalPrice = product.getPrice();
         if (discount != null){
             discountInPercentage = discount.getAmountinpercentage();            
         }

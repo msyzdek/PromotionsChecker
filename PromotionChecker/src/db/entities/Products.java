@@ -29,16 +29,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Miro
  */
 @Entity
-@Table(name = "WAREHOUSE")
+@Table(name = "PRODUCTS")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Warehouse.findAll", query = "SELECT w FROM Warehouse w"),
-    @NamedQuery(name = "Warehouse.findById", query = "SELECT w FROM Warehouse w WHERE w.id = :id"),
-    @NamedQuery(name = "Warehouse.findByName", query = "SELECT w FROM Warehouse w WHERE w.name = :name"),
-    @NamedQuery(name = "Warehouse.findByAmount", query = "SELECT w FROM Warehouse w WHERE w.amount = :amount"),
-    @NamedQuery(name = "Warehouse.findByPrice", query = "SELECT w FROM Warehouse w WHERE w.price = :price"),
-    @NamedQuery(name = "Warehouse.findByCreatedat", query = "SELECT w FROM Warehouse w WHERE w.createdat = :createdat")})
-public class Warehouse implements Serializable {
+    @NamedQuery(name = "Product.findAll", query = "SELECT w FROM Products w"),
+    @NamedQuery(name = "Product.findById", query = "SELECT w FROM Products w WHERE w.id = :id"),
+    @NamedQuery(name = "Product.findByName", query = "SELECT w FROM Products w WHERE w.name = :name"),
+    @NamedQuery(name = "Product.findByAmount", query = "SELECT w FROM Products w WHERE w.amount = :amount"),
+    @NamedQuery(name = "Product.findByPrice", query = "SELECT w FROM Products w WHERE w.price = :price"),
+    @NamedQuery(name = "Product.findByCreatedat", query = "SELECT w FROM Products w WHERE w.createdat = :createdat")})
+public class Products implements Serializable {
     @Transient
     private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private static final long serialVersionUID = 1L;
@@ -60,14 +60,14 @@ public class Warehouse implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date createdat;
 
-    public Warehouse() {
+    public Products() {
     }
 
-    public Warehouse(Integer id) {
+    public Products(Integer id) {
         this.id = id;
     }
 
-    public Warehouse(String name, int amount, float price, int position) {
+    public Products(String name, int amount, float price, int position) {
         this.name = name;
         this.amount = amount;
         this.price = price;
@@ -144,10 +144,10 @@ public class Warehouse implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Warehouse)) {
+        if (!(object instanceof Products)) {
             return false;
         }
-        Warehouse other = (Warehouse) object;
+        Products other = (Products) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -156,7 +156,7 @@ public class Warehouse implements Serializable {
 
     @Override
     public String toString() {
-        return "db.entities.Warehouse[ id=" + id + " ]";
+        return "db.entities.Product[ id=" + id + " ]";
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

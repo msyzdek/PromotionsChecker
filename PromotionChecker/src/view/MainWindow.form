@@ -5,6 +5,7 @@
     <Component class="javax.swing.JMenuItem" name="jMenuItem1">
       <Properties>
         <Property name="text" type="java.lang.String" value="jMenuItem1"/>
+        <Property name="name" type="java.lang.String" value="jMenuItem1" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.persistence.EntityManager" name="PromotionCheckerPUEntityManager">
@@ -47,24 +48,30 @@
         <Property name="observable" type="boolean" value="true"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;db.entities.Warehouse&gt;"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;db.entities.Products&gt;"/>
       </AuxValues>
     </Component>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jMenuBar1" noResource="true"/>
+      </Properties>
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="jMenu1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Plik"/>
+            <Property name="name" type="java.lang.String" value="jMenu1" noResource="true"/>
           </Properties>
           <SubComponents>
             <Menu class="javax.swing.JMenu" name="jMenu3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Wczytaj"/>
+                <Property name="name" type="java.lang.String" value="jMenu3" noResource="true"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="readWarehouse">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Stan magazynu"/>
+                    <Property name="name" type="java.lang.String" value="readWarehouse" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="readWarehouseActionPerformed"/>
@@ -73,6 +80,7 @@
                 <MenuItem class="javax.swing.JMenuItem" name="readDiscounts">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Rabaty"/>
+                    <Property name="name" type="java.lang.String" value="readDiscounts" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="readDiscountsActionPerformed"/>
@@ -85,21 +93,25 @@
         <Menu class="javax.swing.JMenu" name="jMenu2">
           <Properties>
             <Property name="text" type="java.lang.String" value="Pomoc"/>
+            <Property name="name" type="java.lang.String" value="jMenu2" noResource="true"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Instrukcja"/>
+                <Property name="name" type="java.lang.String" value="jMenuItem3" noResource="true"/>
               </Properties>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="jMenu4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zapisz przyk&#x142;adowy plik"/>
+                <Property name="name" type="java.lang.String" value="jMenu4" noResource="true"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="jMenuItem5">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Rabaty"/>
+                    <Property name="name" type="java.lang.String" value="jMenuItem5" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem5ActionPerformed"/>
@@ -108,6 +120,7 @@
                 <MenuItem class="javax.swing.JMenuItem" name="jMenuItem6">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Stan magazynu"/>
+                    <Property name="name" type="java.lang.String" value="jMenuItem6" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem6ActionPerformed"/>
@@ -118,6 +131,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Informacje"/>
+                <Property name="name" type="java.lang.String" value="jMenuItem4" noResource="true"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem4ActionPerformed"/>
@@ -130,6 +144,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
@@ -138,7 +153,7 @@
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
-    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
@@ -164,11 +179,15 @@
     <Container class="javax.swing.JTabbedPane" name="mainTable">
       <Properties>
         <Property name="tabLayoutPolicy" type="int" value="1"/>
+        <Property name="name" type="java.lang.String" value="mainTable" noResource="true"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="warehousePanel">
+        <Container class="javax.swing.JScrollPane" name="productPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="productPanel" noResource="true"/>
+          </Properties>
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -182,7 +201,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="warehouseTable">
+            <Component class="javax.swing.JTable" name="productTable">
               <Properties>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="3">
@@ -204,19 +223,23 @@
                   </TableColumnModel>
                 </Property>
                 <Property name="columnSelectionAllowed" type="boolean" value="true"/>
+                <Property name="name" type="java.lang.String" value="productTable" noResource="true"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
               <BindingProperties>
-                <BindingProperty name="elements" source="warehouseList" target="warehouseTable" targetPath="elements" updateStrategy="0" immediately="true">
+                <BindingProperty name="elements" source="warehouseList" target="productTable" targetPath="elements" updateStrategy="0" immediately="true">
                   <Subbinding sourcePath="${name}">
+                    <BindingParameter name="NAME" value="Name"/>
                     <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="String.class"/>
                   </Subbinding>
                   <Subbinding sourcePath="${price}">
+                    <BindingParameter name="NAME" value="Price"/>
                     <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="Float.class"/>
                   </Subbinding>
                   <Subbinding sourcePath="${amount}">
+                    <BindingParameter name="NAME" value="Amount"/>
                     <BindingParameter name="javax.swing.binding.ParameterKeys.COLUMN_CLASS" value="Integer.class"/>
                   </Subbinding>
                 </BindingProperty>
@@ -225,6 +248,9 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JScrollPane" name="discountPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="discountPanel" noResource="true"/>
+          </Properties>
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -254,6 +280,7 @@
                     </Column>
                   </TableColumnModel>
                 </Property>
+                <Property name="name" type="java.lang.String" value="discountTable" noResource="true"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
@@ -276,6 +303,9 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JScrollPane" name="sumupPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="sumupPanel" noResource="true"/>
+          </Properties>
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -329,6 +359,7 @@
                     </Column>
                   </TableColumnModel>
                 </Property>
+                <Property name="name" type="java.lang.String" value="sumupTable" noResource="true"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>

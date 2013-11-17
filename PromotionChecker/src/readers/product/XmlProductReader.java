@@ -1,6 +1,6 @@
-package readers.warehouse;
+package readers.product;
 
-import db.entities.Warehouse;
+import db.entities.Products;
 import exceptions.ProcessingException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,14 +15,14 @@ import org.apache.poi.ss.usermodel.Row;
  *
  * @author Miro
  */
-public class XmlWarehouseReader implements IWarehouseReader {
+public class XmlProductReader implements IProductReader {
 
     private HSSFWorkbook workbook;
     private HSSFSheet sheet;
     private Iterator<Row> rowIterator;
     private int currentPosition = 1;
     
-    public XmlWarehouseReader(File xml) throws IOException {
+    public XmlProductReader(File xml) throws IOException {
         workbook = new HSSFWorkbook(new FileInputStream(xml));
         sheet = workbook.getSheetAt(0);
         rowIterator = sheet.iterator();
@@ -30,7 +30,7 @@ public class XmlWarehouseReader implements IWarehouseReader {
         rowIterator.next();
     }
     
-    public Warehouse getNext() {
+    public Products getNext() {
         if (!rowIterator.hasNext()){
             return null;
         }
@@ -49,7 +49,7 @@ public class XmlWarehouseReader implements IWarehouseReader {
             if (name == null || name.trim().length() == 0 || price == 0){
                 throw new RuntimeException();
             }
-            return new Warehouse(name, amount, price, currentPosition);
+            return new Products(name, amount, price, currentPosition);
         } catch (Exception ex) {
             String message;
             if (name != null){
