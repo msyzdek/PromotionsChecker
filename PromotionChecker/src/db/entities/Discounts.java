@@ -51,7 +51,7 @@ public class Discounts implements Serializable {
     private String name;
     @Basic(optional = false)
     @Column(name = "AMOUNTINPERCENTAGE")
-    private float amountinpercentage;
+    private double amountinpercentage;
     @Column(name = "CREATEDAT")
     @Temporal(TemporalType.DATE)
     private Date createdat;
@@ -65,7 +65,7 @@ public class Discounts implements Serializable {
         this.id = id;
     }
 
-    public Discounts(String name, float amountinpercentage) {
+    public Discounts(String name, double amountinpercentage) {
         this();
         this.name = name;
         this.amountinpercentage = amountinpercentage;
@@ -91,12 +91,12 @@ public class Discounts implements Serializable {
         changeSupport.firePropertyChange("name", oldName, name);
     }
 
-    public float getAmountinpercentage() {
+    public double getAmountinpercentage() {
         return amountinpercentage;
     }
 
-    public void setAmountinpercentage(float amountinpercentage) {
-        float oldAmountinpercentage = this.amountinpercentage;
+    public void setAmountinpercentage(double amountinpercentage) {
+        double oldAmountinpercentage = this.amountinpercentage;
         this.amountinpercentage = amountinpercentage;
         changeSupport.firePropertyChange("amountinpercentage", oldAmountinpercentage, amountinpercentage);
     }

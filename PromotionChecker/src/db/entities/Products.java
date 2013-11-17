@@ -53,7 +53,7 @@ public class Products implements Serializable {
     private Integer amount;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "PRICE")
-    private Float price;
+    private Double price;
     @Column(name = "POSITION")
     private int position;
     @Column(name = "CREATEDAT")
@@ -67,7 +67,7 @@ public class Products implements Serializable {
         this.id = id;
     }
 
-    public Products(String name, int amount, float price, int position) {
+    public Products(String name, int amount, double price, int position) {
         this.name = name;
         this.amount = amount;
         this.price = price;
@@ -104,12 +104,12 @@ public class Products implements Serializable {
         changeSupport.firePropertyChange("amount", oldAmount, amount);
     }
 
-    public Float getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
-        Float oldPrice = this.price;
+    public void setPrice(Double price) {
+        double oldPrice = this.price;
         this.price = price;
         changeSupport.firePropertyChange("price", oldPrice, price);
     }

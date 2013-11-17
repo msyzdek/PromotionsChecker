@@ -8,7 +8,6 @@ package readers.discount;
 
 import db.entities.Discounts;
 import exceptions.ProcessingException;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -29,8 +28,8 @@ public class XmlDiscountReader implements IDiscountReader {
     private int currentRow;
     private int currentSheet;
     
-    public XmlDiscountReader(File xml) throws IOException {
-        workbook = new HSSFWorkbook(new FileInputStream(xml));
+    public XmlDiscountReader(FileInputStream xml) throws IOException {
+        workbook = new HSSFWorkbook(xml);
         prepareSheet(0);
     }
     
@@ -48,7 +47,7 @@ public class XmlDiscountReader implements IDiscountReader {
                 return getNext();
             }
             name = cell.getStringCellValue();
-            float percentage = getPercentage(cellIterator.next());
+            double percentage = getPercentage(cellIterator.next());
             return new Discounts(name, percentage);
         } catch (Exception ex){
             String message = "SKOROSZYT: " + (currentSheet + 1);
@@ -84,7 +83,7 @@ public class XmlDiscountReader implements IDiscountReader {
         }
     }
 
-    private float getPercentage(Cell cell) {
+    private double getPercentage(Cell cell) {
         switch(cell.getCellType()){
             case Cell.CELL_TYPE_NUMERIC:
                 return percentageFrom(cell.getNumericCellValue());
@@ -95,15 +94,15 @@ public class XmlDiscountReader implements IDiscountReader {
         }
     }
     
-    private float percentageFrom(String value){
-        return Float.valueOf(value.trim().replace("%", ""));
+    private double percentageFrom(String value){
+        return Double.valueOf(value.trim().replace("%", ""));
     }
     
-    private float percentageFrom(double value){
+    private double percentageFrom(double value){
         if (value < 1){
-            return (float)value * 100;
+            return value * 100;
         }
-        return (float)value;
+        return value;
     }
     
     private void checkSheet(Row row) {

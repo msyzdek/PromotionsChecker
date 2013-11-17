@@ -1,12 +1,13 @@
 package controlers;
 
-import calculated.Item;
+import calculated.Sumup;
 import db.DiscountManager;
 import db.ProductManager;
 import db.entities.Discounts;
 import db.entities.Products;
 import exceptions.ProcessingException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +22,9 @@ import readers.discount.IDiscountReader;
 import readers.discount.XmlDiscountReader;
 import readers.product.IProductReader;
 import readers.product.XmlProductReader;
-import view.ExpirationWindow;
 import view.MainWindow;
+import writers.ISumupWriter;
+import writers.XmlSumupWriter;
 
 /**
  *
@@ -34,34 +36,83 @@ public class MainWindowsControler {
 
     public MainWindowsControler(MainWindow view){
         this.view = view;
-        recalculateItems();
+        recalculatesumups();
     }
 
     public void readProductFromXml(File sourceFile){
+        FileInputStream xml = null;
         try {
-            readProductActionPerformed(new XmlProductReader(sourceFile));
+            xml = new FileInputStream(sourceFile);
+            readProductActionPerformed(new XmlProductReader(xml));
         } catch (ProcessingException ex){
             view.showError(ex);
         } catch (Exception ex) {
             view.showCriticalError(ex.getMessage());
+        } finally {
+            try {
+                if (xml != null){
+                    xml.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
     public void readDiscountsFromXml(File sourceFile){
+        FileInputStream xml = null;
         try {
-            readDiscountsActionPerformed(new XmlDiscountReader(sourceFile));
+            xml = new FileInputStream(sourceFile);
+            readDiscountsActionPerformed(new XmlDiscountReader(xml));
         } catch (ProcessingException ex){
             view.showError(ex);
         } catch (Exception ex) {
             view.showCriticalError(ex.getMessage());
+        } finally {
+            try {
+                if (xml != null){
+                    xml.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
-    public void readProductActionPerformed(IProductReader productReader){
+    public void saveSumupToXml(File sourceFile){
+        FileOutputStream xml = null;
+        try {
+            xml = new FileOutputStream(sourceFile + "/ceny po rabacie.xlsx");
+            writeSumupActionPerformed( new XmlSumupWriter(), xml);
+        } catch (ProcessingException ex){
+            view.showError(ex);
+        } catch (Exception ex) {
+            view.showCriticalError(ex.getMessage());
+        } finally {
+            try {
+                if (xml != null){
+                    xml.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void writeSumupActionPerformed(ISumupWriter sumupWriter, FileOutputStream xml) throws IOException{
+        for (Sumup sumup : view.getSumupList()){
+            if (sumup.getDiscountInPercentage() > 0){
+                sumupWriter.writeNext(sumup);
+            }
+        }
+        sumupWriter.saveToFile(xml);
+    }
+    
+    private void readProductActionPerformed(IProductReader productReader){
         HashMap<String, Products> products = readProductsFromFile(productReader);
         saveProductsToDatabase(products);
         view.repiantProductTable();
-        recalculateItems();
+        recalculatesumups();
     }
     
     private HashMap<String, Products> readProductsFromFile(IProductReader productReader){
@@ -100,11 +151,11 @@ public class MainWindowsControler {
         }
     }
 
-    public void readDiscountsActionPerformed(IDiscountReader discountReader) {
+    private void readDiscountsActionPerformed(IDiscountReader discountReader) {
         HashMap<String, Discounts> discounts = readDiscountsFromFile(discountReader);
         saveDiscountsToDatabase(discounts);
         view.repaintDiscountsTable();
-        recalculateItems();
+        recalculatesumups();
     }
 
     private HashMap<String, Discounts> readDiscountsFromFile(IDiscountReader discountReader){
@@ -140,7 +191,7 @@ public class MainWindowsControler {
         }
     }
     
-    private void recalculateItems() {
+    private void recalculatesumups() {
         if (view.getDiscountsList().isEmpty() || view.getProductList().isEmpty()){
             return;
         }
@@ -150,11 +201,11 @@ public class MainWindowsControler {
             discounts.put(discount.getName(), discount);
         }
         
-        List<Item> items = view.getSumupList();
+        List<Sumup> sumups = view.getSumupList();
         for (Products product : view.getProductList()){
-            items.add(new Item(product, discounts.get(product.getName())));
+            sumups.add(new Sumup(product, discounts.get(product.getName())));
         }
-        view.repaintItemsTable();
+        view.repaintsumupsTable();
     }
     
     private void throwExceptionIfPresent(List<String> list){
@@ -163,7 +214,7 @@ public class MainWindowsControler {
         }
     }
 
-    public void saveExampleFile(File selectedFile, String systemFileName, String saveAs) {
+    private void saveExampleFile(File selectedFile, String systemFileName, String saveAs) {
         FileOutputStream fileOutputStream = null;
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("resources/" + systemFileName);
@@ -189,7 +240,7 @@ public class MainWindowsControler {
     }
 
     public void saveProductFileExample(File selectedFile) {
-        saveExampleFile(selectedFile, "product.xls", "stan magazynu.xls");
+        saveExampleFile(selectedFile, "products.xls", "stan magazynu.xls");
     }
     
     public static boolean expired() {

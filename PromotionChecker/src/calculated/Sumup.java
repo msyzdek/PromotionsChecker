@@ -13,14 +13,14 @@ import db.entities.Products;
  *
  * @author Miro
  */
-public class Item {
+public class Sumup {
     private String name;
     private double originalPrice;
-    private float discountInPercentage;
+    private double discountInPercentage;
     private double discountInMoney;
     private double priceDiscountIncluded;
     
-    public Item(Products product, Discounts discount){
+    public Sumup(Products product, Discounts discount){
         name = product.getName();
         originalPrice = product.getPrice();
         if (discount != null){
@@ -46,11 +46,11 @@ public class Item {
         this.originalPrice = originalPrice;
     }
 
-    public float getDiscountInPercentage() {
+    public double getDiscountInPercentage() {
         return discountInPercentage;
     }
 
-    public void setDiscountInPercentage(float discountInPercentage) {
+    public void setDiscountInPercentage(double discountInPercentage) {
         this.discountInPercentage = discountInPercentage;
     }
 

@@ -6,7 +6,7 @@
 
 package view;
 
-import calculated.Item;
+import calculated.Sumup;
 import controlers.MainWindowsControler;
 import db.entities.Discounts;
 import db.entities.Products;
@@ -29,7 +29,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Miro
  */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends CommonWindow {
 
     private JFileChooser fileChooser = new JFileChooser();
     private JFileChooser directoryChooser;
@@ -38,15 +38,14 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() throws Exception {
         extendedInitComponents();
         controler = new MainWindowsControler(this);
-        repaintItemsTable();
+        repaintsumupsTable();
     }
 
     private void extendedInitComponents(){
         initComponents();
-        items = new ArrayList<Item>();
+        sumups = new ArrayList<Sumup>();
         directoryChooser = new JFileChooser();
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        setframeIcon();
     }
     
     /**
@@ -63,8 +62,8 @@ public class MainWindow extends javax.swing.JFrame {
         PromotionCheckerPUEntityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("PromotionCheckerPU").createEntityManager();
         discountsQuery = java.beans.Beans.isDesignTime() ? null : PromotionCheckerPUEntityManager.createQuery("SELECT d FROM Discounts d order by d.name");
         discountsList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(discountsQuery.getResultList());
-        productQuery = java.beans.Beans.isDesignTime() ? null : PromotionCheckerPUEntityManager.createQuery("SELECT w FROM Products w order by w.name");
-        productList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(productQuery.getResultList());
+        productsQuery = java.beans.Beans.isDesignTime() ? null : PromotionCheckerPUEntityManager.createQuery("SELECT w FROM Products w order by w.name");
+        productsList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : org.jdesktop.observablecollections.ObservableCollections.observableList(productsQuery.getResultList());
         mainTable = new javax.swing.JTabbedPane();
         productPanel = new javax.swing.JScrollPane();
         productTable = new javax.swing.JTable();
@@ -75,19 +74,21 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
-        readProduct = new javax.swing.JMenuItem();
+        readProducts = new javax.swing.JMenuItem();
         readDiscounts = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        saveSumup = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jMenuItem6 = new javax.swing.JMenuItem();
+        saveSampleFiles = new javax.swing.JMenu();
+        saveSampleDiscounts = new javax.swing.JMenuItem();
+        saveSampleProducts = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
         jMenuItem1.setName("jMenuItem1"); // NOI18N
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Promotion checker");
         setName("Form"); // NOI18N
 
         mainTable.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -98,13 +99,13 @@ public class MainWindow extends javax.swing.JFrame {
         productTable.setColumnSelectionAllowed(true);
         productTable.setName("productTable"); // NOI18N
 
-        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, productList, productTable);
+        org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, productsList, productTable);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
         columnBinding.setColumnName("Name");
         columnBinding.setColumnClass(String.class);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${price}"));
         columnBinding.setColumnName("Price");
-        columnBinding.setColumnClass(Float.class);
+        columnBinding.setColumnClass(Double.class);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${amount}"));
         columnBinding.setColumnName("Amount");
         columnBinding.setColumnClass(Integer.class);
@@ -126,7 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${amountinpercentage}"));
         columnBinding.setColumnName("%");
-        columnBinding.setColumnClass(Float.class);
+        columnBinding.setColumnClass(Double.class);
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
@@ -172,14 +173,14 @@ public class MainWindow extends javax.swing.JFrame {
         jMenu3.setText("Wczytaj");
         jMenu3.setName("jMenu3"); // NOI18N
 
-        readProduct.setText("Stan magazynu");
-        readProduct.setName("readProduct"); // NOI18N
-        readProduct.addActionListener(new java.awt.event.ActionListener() {
+        readProducts.setText("Stan magazynu");
+        readProducts.setName("readProducts"); // NOI18N
+        readProducts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                readProductActionPerformed(evt);
+                readProductsActionPerformed(evt);
             }
         });
-        jMenu3.add(readProduct);
+        jMenu3.add(readProducts);
 
         readDiscounts.setText("Rabaty");
         readDiscounts.setName("readDiscounts"); // NOI18N
@@ -192,37 +193,46 @@ public class MainWindow extends javax.swing.JFrame {
 
         jMenu1.add(jMenu3);
 
+        saveSumup.setText("Zapisz ceny po rabacie");
+        saveSumup.setName("saveSumup"); // NOI18N
+        saveSumup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveSumupActionPerformed(evt);
+            }
+        });
+        jMenu1.add(saveSumup);
+
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Pomoc");
-        jMenu2.setName("jMenu2"); // NOI18N
+        helpMenu.setText("Pomoc");
+        helpMenu.setName("helpMenu"); // NOI18N
 
         jMenuItem3.setText("Instrukcja");
         jMenuItem3.setName("jMenuItem3"); // NOI18N
-        jMenu2.add(jMenuItem3);
+        helpMenu.add(jMenuItem3);
 
-        jMenu4.setText("Zapisz przykładowy plik");
-        jMenu4.setName("jMenu4"); // NOI18N
+        saveSampleFiles.setText("Zapisz przykładowy plik");
+        saveSampleFiles.setName("saveSampleFiles"); // NOI18N
 
-        jMenuItem5.setText("Rabaty");
-        jMenuItem5.setName("jMenuItem5"); // NOI18N
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        saveSampleDiscounts.setText("Rabaty");
+        saveSampleDiscounts.setName("saveSampleDiscounts"); // NOI18N
+        saveSampleDiscounts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                saveSampleDiscountsActionPerformed(evt);
             }
         });
-        jMenu4.add(jMenuItem5);
+        saveSampleFiles.add(saveSampleDiscounts);
 
-        jMenuItem6.setText("Stan magazynu");
-        jMenuItem6.setName("jMenuItem6"); // NOI18N
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+        saveSampleProducts.setText("Stan magazynu");
+        saveSampleProducts.setName("saveSampleProducts"); // NOI18N
+        saveSampleProducts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
+                saveSampleProductsActionPerformed(evt);
             }
         });
-        jMenu4.add(jMenuItem6);
+        saveSampleFiles.add(saveSampleProducts);
 
-        jMenu2.add(jMenu4);
+        helpMenu.add(saveSampleFiles);
 
         jMenuItem4.setText("Informacje");
         jMenuItem4.setName("jMenuItem4"); // NOI18N
@@ -231,9 +241,9 @@ public class MainWindow extends javax.swing.JFrame {
                 jMenuItem4ActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem4);
+        helpMenu.add(jMenuItem4);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -253,14 +263,6 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void readProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readProductActionPerformed
-        int returnVal = fileChooser.showOpenDialog(this);
-        if (returnVal != 0){
-            return;
-        }
-        controler.readProductFromXml(fileChooser.getSelectedFile());
-    }//GEN-LAST:event_readProductActionPerformed
-
     private void readDiscountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readDiscountsActionPerformed
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal != 0){
@@ -275,21 +277,37 @@ public class MainWindow extends javax.swing.JFrame {
         infoView.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+    private void saveSampleDiscountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSampleDiscountsActionPerformed
         int returnVal = directoryChooser.showOpenDialog(this);
         if (returnVal != 0){
             return;
         }
         controler.saveDiscountFileExample(directoryChooser.getSelectedFile());
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    }//GEN-LAST:event_saveSampleDiscountsActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+    private void saveSampleProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSampleProductsActionPerformed
         int returnVal = directoryChooser.showOpenDialog(this);
         if (returnVal != 0){
             return;
         }
         controler.saveProductFileExample(directoryChooser.getSelectedFile());
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
+    }//GEN-LAST:event_saveSampleProductsActionPerformed
+
+    private void readProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readProductsActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal != 0){
+            return;
+        }
+        controler.readProductFromXml(fileChooser.getSelectedFile());
+    }//GEN-LAST:event_readProductsActionPerformed
+
+    private void saveSumupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSumupActionPerformed
+        int returnVal = directoryChooser.showOpenDialog(this);
+        if (returnVal != 0){
+            return;
+        }
+        controler.saveSumupToXml(directoryChooser.getSelectedFile());
+    }//GEN-LAST:event_saveSumupActionPerformed
 
     /**
      * @param args the command line arguments
@@ -340,42 +358,43 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTable discountTable;
     private java.util.List<db.entities.Discounts> discountsList;
     private javax.persistence.Query discountsQuery;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JTabbedPane mainTable;
     private javax.swing.JScrollPane productPanel;
     private javax.swing.JTable productTable;
+    private java.util.List<db.entities.Products> productsList;
+    private javax.persistence.Query productsQuery;
     private javax.swing.JMenuItem readDiscounts;
-    private javax.swing.JMenuItem readProduct;
+    private javax.swing.JMenuItem readProducts;
+    private javax.swing.JMenuItem saveSampleDiscounts;
+    private javax.swing.JMenu saveSampleFiles;
+    private javax.swing.JMenuItem saveSampleProducts;
+    private javax.swing.JMenuItem saveSumup;
     private javax.swing.JScrollPane sumupPanel;
     private javax.swing.JTable sumupTable;
-    private java.util.List<db.entities.Products> productList;
-    private javax.persistence.Query productQuery;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
-    private List<Item> items;
+    private List<Sumup> sumups;
     
-    public void repaintItemsTable(){
+    public void repaintsumupsTable(){
         DefaultTableModel model = (DefaultTableModel) sumupTable.getModel();
         for (int i = 0; i < model.getRowCount(); ++i) {
             model.removeRow(i);
         }
-        for (Item item : items){
-            model.addRow(item.toArray());
+        for (Sumup sumup : sumups){
+            model.addRow(sumup.toArray());
         }
     }
     
     public void repiantProductTable(){
-        productList.clear();
-        productList.addAll(productQuery.getResultList());
+        productsList.clear();
+        productsList.addAll(productsQuery.getResultList());
         productTable.repaint();
     }
     
@@ -386,28 +405,16 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     public List<Products> getProductList(){
-        return productList;
+        return productsList;
     }
     
     public List<Discounts> getDiscountsList(){
         return discountsList;
     }
     
-    public List<Item> getSumupList(){
-        return items;
+    public List<Sumup> getSumupList(){
+        return sumups;
     }
-    
-    public void setframeIcon(){
-        try{
-            InputStream imgStream = this.getClass().getResourceAsStream("/resources/main_icon.png");
-            BufferedImage bi = ImageIO.read(imgStream);
-            ImageIcon myImg = new ImageIcon(bi);
-            this.setIconImage(myImg.getImage());
-        }catch(Exception e){
-            System.out.println(e);
-        }   
-    };
-
     
     public void showCriticalError(String message){
         JOptionPane.showMessageDialog(this, "Nieznany błąd. \n" + message, "Błąd", JOptionPane.ERROR_MESSAGE);

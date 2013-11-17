@@ -10,7 +10,7 @@ package view;
  *
  * @author Miro
  */
-public class ExpirationWindow extends javax.swing.JFrame {
+public class ExpirationWindow extends CommonWindow {
 
     /**
      * Creates new form ExpirationWindow

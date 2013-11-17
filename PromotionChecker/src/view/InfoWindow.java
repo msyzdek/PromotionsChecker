@@ -10,7 +10,7 @@ package view;
  *
  * @author Miro
  */
-public class InfoWindow extends javax.swing.JFrame {
+public class InfoWindow extends CommonWindow {
 
     /**
      * Creates new form InfoWindow

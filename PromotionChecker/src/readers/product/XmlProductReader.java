@@ -22,8 +22,8 @@ public class XmlProductReader implements IProductReader {
     private Iterator<Row> rowIterator;
     private int currentPosition = 1;
     
-    public XmlProductReader(File xml) throws IOException {
-        workbook = new HSSFWorkbook(new FileInputStream(xml));
+    public XmlProductReader(FileInputStream xml) throws IOException {
+        workbook = new HSSFWorkbook(xml);
         sheet = workbook.getSheetAt(0);
         rowIterator = sheet.iterator();
         //skip headers
@@ -45,7 +45,7 @@ public class XmlProductReader implements IProductReader {
             }
             name = cell.getStringCellValue();
             int amount = (int)cellIterator.next().getNumericCellValue();
-            float price = (float)cellIterator.next().getNumericCellValue();
+            double price = cellIterator.next().getNumericCellValue();
             if (name == null || name.trim().length() == 0 || price == 0){
                 throw new RuntimeException();
             }
