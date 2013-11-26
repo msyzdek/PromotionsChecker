@@ -7,6 +7,8 @@
 package db;
 
 import db.entities.Products;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -19,4 +21,7 @@ public class ProductManager extends DatabaseManager<Products> {
         return em.createNamedQuery("Product.findAll", Products.class).getResultList();
     }
         
+    public void deleteAll() {
+        em.createQuery("DELETE FROM Products").executeUpdate();
+    }
 }

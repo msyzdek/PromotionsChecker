@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="jScrollPane2" min="-2" pref="704" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <Component id="jScrollPane2" min="-2" pref="404" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextArea" name="jTextArea1">
+          <Properties>
+            <Property name="columns" type="int" value="20"/>
+            <Property name="lineWrap" type="boolean" value="true"/>
+            <Property name="rows" type="int" value="5"/>
+            <Property name="text" type="java.lang.String" value="Instrukcja obs&#x142;ugi Programu &#xa;&#x201c;PROMOTION CHECKER&#x201d;&#xa;&#xa;&#xa;&#xa;&#xa;Kilka s&#x142;&#xf3;w o programie Promotion Checker:&#xa;Program zosta&#x142; stworzony dla u&#x142;atwienia pracy podczas tworzenia promocyjnych metek cenowych m.in. podczas wyprzeda&#x17c;y. Program nie &#x142;&#x105;czy si&#x119; z sieci&#x105;, przez co nikt nie ma podgl&#x105;du do danych! Jest to wersja testowa programu, zosta&#x142;a stworzona na potrzeby Naszej firmy i posiada licencj&#x119; na u&#x17c;ytkowanie tylko do 16 listopada 2014 roku. Oczywi&#x15b;cie p&#xf3;&#x17a;niej licencja zostanie przed&#x142;u&#x17c;ona, o ile program b&#x119;dzie cieszy&#x142; si&#x119; Naszym zainteresowaniem.&#xa;&#xa;&#xa;Jak korzysta&#x107; z programu Promotion Checker?:&#xa;Na pocz&#x105;tku nale&#x17c;y WYGENEROWA&#x106; STANY MAGAZYNOWE oraz dok&#x142;adnie przygotowa&#x107; plik RABATY wg. poni&#x17c;szych zasad, gdy&#x17c; w przeciwnym wypadku program b&#x119;dzie pokazywa&#x142; b&#x142;&#x119;dy i nie b&#x119;dzie dzia&#x142;a&#x142; poprawnie.&#xa;&#xa;UWAGA!&#xa;Program przelicza warto&#x15b;ci tylko tych towar&#xf3;w, kt&#xf3;re maj&#x105; by&#x107; wyprzedawane!&#xa;&#xa;1. Generacja stan&#xf3;w magazynowych:&#xa;- w programie sprzeda&#x17c;y symfonia nale&#x17c;y wybra&#x107; z opcji zak&#x142;adk&#x119; &#x201e;TOWARY&#x201d;, nast&#x119;pnie rozwin&#x105;&#x107; opcje &#x201e;OPERACJE&#x201d; i wybra&#x107; &#x201e;EXPORT STAN&#xd3;W MAGAZYNOWYCH&#x201d;, robimy to dok&#x142;adnie w taki sam spos&#xf3;b jak w przypadku &#x15b;ci&#x105;gania stan&#xf3;w magazynowych niezb&#x119;dnych do obs&#x142;ugi ND TOP 100. Gotowy plik zapisujemy np. na pulpicie opisuj&#x105;c go: &#x201e;stany magazynowe&#x201d;.&#xa;&#xa;2. Przygotowanie pliku &#x201e;RABATY&#x201d;:&#xa;Gotowe pliki otrzymane od BM i nie tylko, zawieraj&#x105;ce rabaty na okre&#x15b;lone modele zegark&#xf3;w, musimy zmodyfikowa&#x107; dla programu, gdy&#x17c; w innym wypadku program b&#x119;dzie informowa&#x142; o b&#x142;&#x119;dach lub nie b&#x119;dzie dzia&#x142;a&#x142; prawid&#x142;owo. Plik Excel, kt&#xf3;ry trzeba przenie&#x15b;&#x107; do programu musi mie&#x107; tylko dwie kolumny. W pierwszej powinny znale&#x17a;&#x107; si&#x119; Nazwy towaru a w drugiej % rabatu. Do oblicze&#x144;, w tym dokumencie program nie potrzebuje ceny, poniewa&#x17c; wybiera j&#x105; z pliku &#x201e;stany magazynowe&#x201d;. Gotowy dokument zapisujemy podobnie jak wcze&#x15b;niejszy np. na pulpicie z przyk&#x142;adow&#x105; nazw&#x105; &#x201e;rabaty&#x201d;.&#xa;Dane nie musz&#x105; znajdowa&#x107; si&#x119; w 1 Arkuszu, ka&#x17c;da marka mo&#x17c;e znajdowa&#x107; si&#x119; w r&#xf3;&#x17c;nych arkuszach kalkulacyjnych gdy&#x17c; program Promotion Checker do oblicze&#x144; przeszukuje ca&#x142;y plik Excel.&#xa;&#xa;WA&#x17b;NE!&#xa;W kolumnie A &#x2013; musz&#x105; znajdowa&#x107; si&#x119; nazwy towar&#xf3;w, nast&#x119;pnie w kolumnie B &#x2013; warto&#x15b;&#x107; rabatu np. 10%, 20% itp.&#xa;&#xa;&#xa;&#xa;&#xa;Gotowy plik powinien wygl&#x105;da&#x107; nast&#x119;puj&#x105;co:&#xa;&#xa; &#xa;&#xa;&#xa;3. Wklejanie danych do programu &#x201e;Promotion Checker&#x201d;:&#xa;   &#xf0d8; PLIK&#xa;   &#xf0d8; WCZYTAJ&#xa;   &#xf0d8; STAN MAGAZYNU&#xa;   &#xf0d8; Odszukujemy zapisany wcze&#x15b;niej plik ze stanami magazynowymi i klikamy OPEN.&#xa;Nast&#x119;pnie ponownie klikamy w opcje:&#xa;   &#xf0d8; PLIK&#xa;   &#xf0d8; WCZYTAJ&#xa;   &#xf0d8; RABATY&#xa;   &#xf0d8; Odszukujemy zapisany wcze&#x15b;niej plik z rabatami i klikamy OPEN.&#xa;&#xa;Po tej operacji w zak&#x142;adce programu &#x201e;Ceny z uwzgl&#x119;dnieniem rabat&#xf3;w&#x201d; mo&#x17c;emy ju&#x17c; zauwa&#x17c;y&#x107;, &#x17c;e program przeliczy&#x142; warto&#x15b;ci aktualnie posiadanych towar&#xf3;w, kt&#xf3;re s&#x105; obj&#x119;te wyprzeda&#x17c;&#x105;.&#xa;&#xa;4.&#x9;Nast&#x119;pnie, &#x17c;eby u&#x142;atwi&#x107; wykonanie metek cenowych do towar&#xf3;w wyprzedawanych, program wybiera te towary i zapisuje w pliku Excel, kt&#xf3;ry mo&#x17c;na wydrukowa&#x107;! &#xa;&#x9;Jak to zrobi&#x107;?:&#xa;&#xf0d8;&#x9;PLIK&#xa;&#xf0d8;&#x9;ZAPISZ CENY PO RABACIE&#xa;&#xf0d8;&#x9;Pojawi si&#x119; okienko, kt&#xf3;re karze wskaza&#x107; nam miejsce zapisania pliku. Nie trzeba go opisywa&#x107;, program sam wygeneruje jego nazw&#x119;! Przyk&#x142;adowo, chcemy go zapisa&#x107; na pulpicie, wyszukujemy opcj&#x119; &#x201e;PULPIT&#x201d; i klikamy OPEN. Gotowy plik z nazw&#x105; towaru, kwot&#x105; rabatu i cen&#x105; przed i po rabacie znajduje si&#x119; na pulpicie &#xf04a;.&#xa;&#xa;Gotowy plik, z kt&#xf3;rego mo&#x17c;emy korzysta&#x107; podczas wykonywania metek cenowych powinien wygl&#x105;da&#x107; nast&#x119;puj&#x105;co:&#xa;&#xa; &#xa;&#xa; &#xa;&#xa;&#x9;&#x9;&#x17b;ycz&#x119; udanego korzystania z programu, w razie b&#x142;&#x119;d&#xf3;w lub problem&#xf3;w z u&#x17c;ytkowaniem prosz&#x119; o kontakt,&#xa;&#xa;Dorota Z&#x119;bala&#xa;Salon ST_KR09/10&#xa;&#xa;&#xa;Tw&#xf3;rc&#x105; programu jest firma: Miros&#x142;aw Syzdek MIRSOFT&#xa;"/>
+            <Property name="wrapStyleWord" type="boolean" value="true"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[670, 1228]"/>
+            </Property>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

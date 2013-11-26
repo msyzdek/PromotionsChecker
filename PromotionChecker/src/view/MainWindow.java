@@ -77,8 +77,11 @@ public class MainWindow extends CommonWindow {
         readProducts = new javax.swing.JMenuItem();
         readDiscounts = new javax.swing.JMenuItem();
         saveSumup = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        removeProducts = new javax.swing.JMenuItem();
+        removeDiscounts = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        howToUseMenu = new javax.swing.JMenuItem();
         saveSampleFiles = new javax.swing.JMenu();
         saveSampleDiscounts = new javax.swing.JMenuItem();
         saveSampleProducts = new javax.swing.JMenuItem();
@@ -170,7 +173,7 @@ public class MainWindow extends CommonWindow {
         jMenu1.setText("Plik");
         jMenu1.setName("jMenu1"); // NOI18N
 
-        jMenu3.setText("Wczytaj");
+        jMenu3.setText("Dodaj");
         jMenu3.setName("jMenu3"); // NOI18N
 
         readProducts.setText("Stan magazynu");
@@ -202,14 +205,42 @@ public class MainWindow extends CommonWindow {
         });
         jMenu1.add(saveSumup);
 
+        jMenu2.setText("Wyczyść");
+        jMenu2.setName("jMenu2"); // NOI18N
+
+        removeProducts.setText("Stan magazynu");
+        removeProducts.setName("removeProducts"); // NOI18N
+        removeProducts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeProductsActionPerformed(evt);
+            }
+        });
+        jMenu2.add(removeProducts);
+
+        removeDiscounts.setText("Rabaty");
+        removeDiscounts.setName("removeDiscounts"); // NOI18N
+        removeDiscounts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeDiscountsActionPerformed(evt);
+            }
+        });
+        jMenu2.add(removeDiscounts);
+
+        jMenu1.add(jMenu2);
+
         jMenuBar1.add(jMenu1);
 
         helpMenu.setText("Pomoc");
         helpMenu.setName("helpMenu"); // NOI18N
 
-        jMenuItem3.setText("Instrukcja");
-        jMenuItem3.setName("jMenuItem3"); // NOI18N
-        helpMenu.add(jMenuItem3);
+        howToUseMenu.setText("Instrukcja");
+        howToUseMenu.setName("howToUseMenu"); // NOI18N
+        howToUseMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                howToUseMenuActionPerformed(evt);
+            }
+        });
+        helpMenu.add(howToUseMenu);
 
         saveSampleFiles.setText("Zapisz przykładowy plik");
         saveSampleFiles.setName("saveSampleFiles"); // NOI18N
@@ -309,6 +340,20 @@ public class MainWindow extends CommonWindow {
         controler.saveSumupToXml(directoryChooser.getSelectedFile());
     }//GEN-LAST:event_saveSumupActionPerformed
 
+    private void howToUseMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_howToUseMenuActionPerformed
+        JFrame howToUse = new HowToUse();
+        howToUse.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        howToUse.setVisible(true);
+    }//GEN-LAST:event_howToUseMenuActionPerformed
+
+    private void removeProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeProductsActionPerformed
+        controler.deleteOldProducts();
+    }//GEN-LAST:event_removeProductsActionPerformed
+
+    private void removeDiscountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDiscountsActionPerformed
+        controler.deleteOldDiscounts();
+    }//GEN-LAST:event_removeDiscountsActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -359,11 +404,12 @@ public class MainWindow extends CommonWindow {
     private java.util.List<db.entities.Discounts> discountsList;
     private javax.persistence.Query discountsQuery;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem howToUseMenu;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JTabbedPane mainTable;
     private javax.swing.JScrollPane productPanel;
@@ -372,6 +418,8 @@ public class MainWindow extends CommonWindow {
     private javax.persistence.Query productsQuery;
     private javax.swing.JMenuItem readDiscounts;
     private javax.swing.JMenuItem readProducts;
+    private javax.swing.JMenuItem removeDiscounts;
+    private javax.swing.JMenuItem removeProducts;
     private javax.swing.JMenuItem saveSampleDiscounts;
     private javax.swing.JMenu saveSampleFiles;
     private javax.swing.JMenuItem saveSampleProducts;
@@ -384,8 +432,9 @@ public class MainWindow extends CommonWindow {
     
     public void repaintsumupsTable(){
         DefaultTableModel model = (DefaultTableModel) sumupTable.getModel();
-        for (int i = 0; i < model.getRowCount(); ++i) {
-            model.removeRow(i);
+        int rows = model.getRowCount();
+        for (int i = 0; i < rows; ++i) {
+            model.removeRow(0);
         }
         for (Sumup sumup : sumups){
             model.addRow(sumup.toArray());
@@ -414,35 +463,5 @@ public class MainWindow extends CommonWindow {
     
     public List<Sumup> getSumupList(){
         return sumups;
-    }
-    
-    public void showCriticalError(String message){
-        JOptionPane.showMessageDialog(this, "Nieznany błąd. \n" + message, "Błąd", JOptionPane.ERROR_MESSAGE);
-    }
-    
-    public void showError(ProcessingException exception){
-        switch(exception.getType()){
-            case ProcessingException.MULTI_LINE :
-                showError(exception.getErrorList());
-                return;
-            case ProcessingException.STRING_TYPE :
-                showError(exception.getMessage());
-        }
-    }
-    
-    private void showError(List<String> list){
-        String message = Arrays.toString(list.subList(0, list.size() > 10 ? 10 : list.size()).toArray());
-        message = message.substring(1, message.length() - 1);
-        if (list.size() > 10) {
-            message += ", ...";
-        }
-        if (message.length() > 150){
-            message = message.replaceAll(",", ", \n");
-        }
-        JOptionPane.showMessageDialog(this, "Błąd podczas wczytywania lini:\n" + message, "Wczytywanie nie powiodło się", JOptionPane.ERROR_MESSAGE);
-    }
-    
-    private void showError(String message){
-        JOptionPane.showMessageDialog(this, message, "Błąd podczas wczytywania pliku", JOptionPane.ERROR_MESSAGE);
     }
 }

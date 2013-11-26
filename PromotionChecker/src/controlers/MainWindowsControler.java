@@ -6,6 +6,7 @@ import db.ProductManager;
 import db.entities.Discounts;
 import db.entities.Products;
 import exceptions.ProcessingException;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ import readers.discount.IDiscountReader;
 import readers.discount.XmlDiscountReader;
 import readers.product.IProductReader;
 import readers.product.XmlProductReader;
+import view.ErrorDialog;
 import view.MainWindow;
 import writers.ISumupWriter;
 import writers.XmlSumupWriter;
@@ -31,99 +33,84 @@ import writers.XmlSumupWriter;
  * @author Miro
  */
 public class MainWindowsControler {
-    
-    private MainWindow view;
 
-    public MainWindowsControler(MainWindow view){
+    private MainWindow view;
+    private ErrorDialog errorDialog;
+
+    public MainWindowsControler(MainWindow view) {
         this.view = view;
+        errorDialog = new ErrorDialog(view);
         recalculatesumups();
     }
 
-    public void readProductFromXml(File sourceFile){
+    public void readProductFromXml(File sourceFile) {
         FileInputStream xml = null;
         try {
             xml = new FileInputStream(sourceFile);
             readProductActionPerformed(new XmlProductReader(xml));
-        } catch (ProcessingException ex){
-            view.showError(ex);
+        } catch (ProcessingException ex) {
+            errorDialog.showError(ex);
         } catch (Exception ex) {
-            view.showCriticalError(ex.getMessage());
+            errorDialog.showCriticalError(ex.getMessage());
         } finally {
-            try {
-                if (xml != null){
-                    xml.close();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            closeStreamErrorIgnore(xml);
         }
     }
-    
-    public void readDiscountsFromXml(File sourceFile){
+
+    public void readDiscountsFromXml(File sourceFile) {
         FileInputStream xml = null;
         try {
             xml = new FileInputStream(sourceFile);
             readDiscountsActionPerformed(new XmlDiscountReader(xml));
-        } catch (ProcessingException ex){
-            view.showError(ex);
+        } catch (ProcessingException ex) {
+            errorDialog.showError(ex);
         } catch (Exception ex) {
-            view.showCriticalError(ex.getMessage());
+            errorDialog.showCriticalError(ex.getMessage());
         } finally {
-            try {
-                if (xml != null){
-                    xml.close();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+           closeStreamErrorIgnore(xml);
         }
     }
-    
-    public void saveSumupToXml(File sourceFile){
+
+    public void saveSumupToXml(File sourceFile) {
         FileOutputStream xml = null;
         try {
             xml = new FileOutputStream(sourceFile + "/ceny po rabacie.xlsx");
-            writeSumupActionPerformed( new XmlSumupWriter(), xml);
-        } catch (ProcessingException ex){
-            view.showError(ex);
+            writeSumupActionPerformed(new XmlSumupWriter(), xml);
+        } catch (ProcessingException ex) {
+            errorDialog.showError(ex);
         } catch (Exception ex) {
-            view.showCriticalError(ex.getMessage());
+            errorDialog.showCriticalError(ex.getMessage());
         } finally {
-            try {
-                if (xml != null){
-                    xml.close();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            closeStreamErrorIgnore(xml);
         }
     }
-    
-    private void writeSumupActionPerformed(ISumupWriter sumupWriter, FileOutputStream xml) throws IOException{
-        for (Sumup sumup : view.getSumupList()){
-            if (sumup.getDiscountInPercentage() > 0){
+
+    private void writeSumupActionPerformed(ISumupWriter sumupWriter, FileOutputStream xml) throws IOException {
+        for (Sumup sumup : view.getSumupList()) {
+            if (sumup.getDiscountInPercentage() > 0) {
                 sumupWriter.writeNext(sumup);
             }
         }
         sumupWriter.saveToFile(xml);
     }
-    
-    private void readProductActionPerformed(IProductReader productReader){
+
+    private void readProductActionPerformed(IProductReader productReader) {
+        GregorianCalendar calendar = new GregorianCalendar();
         HashMap<String, Products> products = readProductsFromFile(productReader);
-        saveProductsToDatabase(products);
+        saveProductsToDatabase(products, calendar);
         view.repiantProductTable();
         recalculatesumups();
     }
-    
-    private HashMap<String, Products> readProductsFromFile(IProductReader productReader){
+
+    private HashMap<String, Products> readProductsFromFile(IProductReader productReader) {
         HashMap<String, Products> products = new HashMap<String, Products>();
-            //TODO: check prices
+        //TODO: check prices
         ArrayList<String> errors = new ArrayList<String>();
-        while(productReader.hasNext()){
+        while (productReader.hasNext()) {
             try {
                 Products product = productReader.getNext();
-                Products fromHash = products.get(product.getName()); 
-                if (fromHash != null){
+                Products fromHash = products.get(product.getName());
+                if (fromHash != null) {
                     fromHash.setAmount(fromHash.getAmount() + product.getAmount());
                 } else {
                     products.put(product.getName(), product);
@@ -135,19 +122,29 @@ public class MainWindowsControler {
         throwExceptionIfPresent(errors);
         return products;
     }
-    
-    private void saveProductsToDatabase(HashMap<String, Products> products){
+
+    private void saveProductsToDatabase(HashMap<String, Products> products, GregorianCalendar cal) {
         ProductManager productManager = null;
         try {
             productManager = new ProductManager();
-            for (Entry<String, Products> product : products.entrySet()){
+            for (Entry<String, Products> product : products.entrySet()) {
                 productManager.create(product.getValue());
             }
             productManager.save();
         } finally {
-            if (productManager != null){
+            if (productManager != null) {
                 productManager.close();
             }
+        }
+    }
+    
+    private void closeStreamErrorIgnore(Closeable stream){
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -158,14 +155,14 @@ public class MainWindowsControler {
         recalculatesumups();
     }
 
-    private HashMap<String, Discounts> readDiscountsFromFile(IDiscountReader discountReader){
+    private HashMap<String, Discounts> readDiscountsFromFile(IDiscountReader discountReader) {
         HashMap<String, Discounts> discounts = new HashMap<String, Discounts>();
         //TODO: check prices
         ArrayList<String> errors = new ArrayList<String>();
-        while(discountReader.hasNext()){
+        while (discountReader.hasNext()) {
             try {
                 Discounts discount = discountReader.getNext();
-                if (discounts.get(discount.getName()) == null){
+                if (discounts.get(discount.getName()) == null) {
                     discounts.put(discount.getName(), discount);
                 }
             } catch (RuntimeException ex) {
@@ -180,36 +177,36 @@ public class MainWindowsControler {
         DiscountManager discountManager = null;
         try {
             discountManager = new DiscountManager();
-            for (Entry<String, Discounts> discount : discounts.entrySet()){
+            for (Entry<String, Discounts> discount : discounts.entrySet()) {
                 discountManager.create(discount.getValue());
             }
             discountManager.save();
         } finally {
-            if (discountManager != null){
+            if (discountManager != null) {
                 discountManager.close();
             }
         }
     }
-    
+
     private void recalculatesumups() {
-        if (view.getDiscountsList().isEmpty() || view.getProductList().isEmpty()){
-            return;
-        }
-        
-        HashMap<String, Discounts> discounts = new HashMap<String, Discounts>();
-        for (Discounts discount : view.getDiscountsList()){
-            discounts.put(discount.getName(), discount);
-        }
-        
-        List<Sumup> sumups = view.getSumupList();
-        for (Products product : view.getProductList()){
-            sumups.add(new Sumup(product, discounts.get(product.getName())));
+        if (view.getDiscountsList().isEmpty() || view.getProductList().isEmpty()) {
+            view.getSumupList().clear();
+        } else {
+            HashMap<String, Discounts> discounts = new HashMap<String, Discounts>();
+            for (Discounts discount : view.getDiscountsList()) {
+                discounts.put(discount.getName(), discount);
+            }
+
+            List<Sumup> sumups = view.getSumupList();
+            for (Products product : view.getProductList()) {
+                sumups.add(new Sumup(product, discounts.get(product.getName())));
+            }
         }
         view.repaintsumupsTable();
     }
-    
-    private void throwExceptionIfPresent(List<String> list){
-        if (list != null && list.size() > 0){
+
+    private void throwExceptionIfPresent(List<String> list) {
+        if (list != null && list.size() > 0) {
             throw new ProcessingException(list);
         }
     }
@@ -221,17 +218,13 @@ public class MainWindowsControler {
             fileOutputStream = new FileOutputStream(selectedFile + "/" + saveAs);
             byte[] data = new byte[10000];
             int amount;
-            while ((amount = inputStream.read(data)) > 0){
+            while ((amount = inputStream.read(data)) > 0) {
                 fileOutputStream.write(data, 0, amount);
             }
         } catch (Exception ex) {
             Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                fileOutputStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(MainWindowsControler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            closeStreamErrorIgnore(fileOutputStream);
         }
     }
 
@@ -242,9 +235,43 @@ public class MainWindowsControler {
     public void saveProductFileExample(File selectedFile) {
         saveExampleFile(selectedFile, "products.xls", "stan magazynu.xls");
     }
-    
+
     public static boolean expired() {
         GregorianCalendar expirationDate = new GregorianCalendar(2014, 12, 1);
         return expirationDate.compareTo(new GregorianCalendar()) < 0;
+    }
+
+    public void deleteOldProducts() {
+        ProductManager pm = null;
+        try {
+            pm = new ProductManager();
+            pm.deleteAll();
+            pm.save();
+        } catch (Exception ex) {
+            errorDialog.showCriticalError(ex.getMessage());
+        } finally {
+            if (pm != null) {
+                pm.close();
+            }
+        }
+        view.repiantProductTable();
+        recalculatesumups();
+    }
+
+    public void deleteOldDiscounts() {
+        DiscountManager dm = null;
+        try {
+            dm = new DiscountManager();
+            dm.deleteAll();
+            dm.save();
+        } catch (Exception ex) {
+            errorDialog.showCriticalError(ex.getMessage());
+        } finally {
+            if (dm != null) {
+                dm.close();
+            }
+        }
+        view.repaintDiscountsTable();
+        recalculatesumups();
     }
 }
